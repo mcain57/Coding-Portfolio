@@ -27,21 +27,6 @@ def bs_put_price(S0, K, r, sigma, T):
     else:
         return K * np.exp(-r*T) * norm.cdf(-d_2(d_1(S0, K, r, sigma, T), sigma, T)) - S0 * norm.cdf(-d_1(S0, K, r, sigma, T))
 
-C = bs_call_price(S0, K, r, sigma, T)
-P = bs_put_price(S0, K, r, sigma, T)
-
-print(f"Call: {C:.4f}")
-print(f"Put: {P:.4f}")
-
-lhs = C - P
-rhs = S0 - K * np.exp(-r * T)
-print(f"Parity residual: {lhs - rhs:.2e}")
-assert abs(lhs - rhs) < 1e-10, "Put-call parity failed"
-
-C = bs_call_price(S0, K, r, sigma, T)
-P = bs_put_price(S0, K, r, sigma, T)
-
-
 if __name__ == "__main__":
     print(f"Call: {C:.4f}")
     print(f"Put: {P:.4f}")
@@ -72,3 +57,4 @@ def mc_call_price(S0, K, r, sigma, T, n_paths, rng):
     price = np.exp(-r*T) * np.mean(payoffs)
     se = np.exp(-r*T) * np.std(payoffs, ddof=1) / np.sqrt(n_paths)
     return price, se
+
