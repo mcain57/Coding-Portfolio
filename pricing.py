@@ -28,6 +28,9 @@ def bs_put_price(S0, K, r, sigma, T):
         return K * np.exp(-r*T) * norm.cdf(-d_2(d_1(S0, K, r, sigma, T), sigma, T)) - S0 * norm.cdf(-d_1(S0, K, r, sigma, T))
 
 if __name__ == "__main__":
+    C = bs_call_price(S0, K, r, sigma, T)   # ← also unindented
+    P = bs_put_price(S0, K, r, sigma, T)
+
     print(f"Call: {C:.4f}")
     print(f"Put: {P:.4f}")
 
