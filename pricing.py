@@ -1,14 +1,6 @@
 from scipy.stats import norm
 import numpy as np
 
-# --- INIT --- #
-if __name__ == "__main__":
-    S0 = 100
-    K = 100
-    r = 0.05
-    sigma = 0.2
-    T = 1
-
 def d_1(S0, K, r, sigma, T):
     return (np.log(S0/K)+(r + 1/2 * sigma**2)*T) / ( sigma * np.sqrt(T))
 
@@ -26,18 +18,6 @@ def bs_put_price(S0, K, r, sigma, T):
         return max(K-S0, 0)
     else:
         return K * np.exp(-r*T) * norm.cdf(-d_2(d_1(S0, K, r, sigma, T), sigma, T)) - S0 * norm.cdf(-d_1(S0, K, r, sigma, T))
-
-if __name__ == "__main__":
-    C = bs_call_price(S0, K, r, sigma, T)   # ← also unindented
-    P = bs_put_price(S0, K, r, sigma, T)
-
-    print(f"Call: {C:.4f}")
-    print(f"Put: {P:.4f}")
-
-    lhs = C - P
-    rhs = S0 - K * np.exp(-r * T)
-    print(f"Parity residual: {lhs - rhs:.2e}")
-    assert abs(lhs - rhs) < 1e-10, "Put-call parity failed"
 
 """
 EXPLANATION:
@@ -61,3 +41,21 @@ def mc_call_price(S0, K, r, sigma, T, n_paths, rng):
     se = np.exp(-r*T) * np.std(payoffs, ddof=1) / np.sqrt(n_paths)
     return price, se
 
+# --- INIT --- #
+if __name__ == "__main__":
+    S0 = 100
+    K = 100
+    r = 0.05
+    sigma = 0.2
+    T = 1
+
+    C = bs_call_price(S0, K, r, sigma, T)
+    P = bs_put_price(S0, K, r, sigma, T)
+    
+    print(f"Call: {C:.4f}")
+    print(f"Put: {P:.4f}")
+    
+    lhs = C - P
+    rhs = S0 - K * np.exp(-r * T)
+    print(f"Parity residual: {lhs - rhs:.2e}")
+    assert abs(lhs - rhs) < 1e-10, "Put-call parity failed"
