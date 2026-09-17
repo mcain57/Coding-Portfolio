@@ -42,14 +42,14 @@ ax2.set_title("Sensitivity to $\\sigma$  ($r$ = 0.05)")
 for ax in (ax1, ax2):
     ax.grid(alpha=0.3)
 
-plt.tight_layout()
-plt.savefig("sensitivity.png", dpi=130)
-plt.show()
-
 lo = min(min(R_results), min(Sigma_results))
 hi = max(max(R_results), max(Sigma_results))
 ax1.set_ylim(lo - 1, hi + 1)
 ax2.set_ylim(lo - 1, hi + 1)
+
+plt.tight_layout()
+plt.savefig("sensitivity.png", dpi=130)
+plt.show()
 
 r_range = max(R_results) - min(R_results)
 s_range = max(Sigma_results) - min(Sigma_results)
