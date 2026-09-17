@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from pricing import bs_call_price, mc_call_price
+from pricing import bs_call_price, mc_call_price, terminal_prices
 
 S0 = 100.0
 K = 100.0
