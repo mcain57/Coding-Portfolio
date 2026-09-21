@@ -41,6 +41,20 @@ def mc_call_price(S0, K, r, sigma, T, n_paths, rng):
     se = np.exp(-r*T) * np.std(payoffs, ddof=1) / np.sqrt(n_paths)
     return price, se
 
+def mc_call_price_antithetic(S0, K, r, sigma, T, n_paths, rng):
+    Z = rng.normal(size=n_paths//2)
+    S_up = S0 * np.exp((r-0.5*sigma**2)*T + sigma * np.sqrt(T) * Z)
+    S_dn = S0 * np.exp((r-0.5*sigma**2)*T - sigma * np.sqrt(T) * Z)
+
+    pay_up = np.maximum(S_up - K, 0)
+    pay_dn = np.maximum(S_dn - K, 0)
+    pair = (pay_up + pay_dn) / 2
+
+    price = np.exp(-r*T) * np.mean(pair)
+    se = np.exp(-r*T) * np.std(pair, ddof=1) / np.sqrt(n_paths //2)
+
+    return price, se
+
 # --- INIT --- #
 if __name__ == "__main__":
     S0 = 100

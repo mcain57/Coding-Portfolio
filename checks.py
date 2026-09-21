@@ -15,6 +15,7 @@ from pricing import (
     bs_put_price,
     terminal_prices,
     mc_call_price,
+    mc_call_price_antithetic,
 )
  
 # Reference case used throughout
@@ -146,6 +147,27 @@ se_slope = np.polyfit(np.log(Ns), np.log(ses), 1)[0]
 check("SE log-log slope ~ -0.5", abs(se_slope + 0.5) < 0.05, f"got {se_slope:+.4f}")
  
 # ----------------------------------------------------------------------
+print("\n8. Antithetic variates")
+ 
+rng = np.random.default_rng(0)
+p_ant, se_ant = mc_call_price_antithetic(S0, K, R, SIGMA, T, 1_000_000, rng)
+rng = np.random.default_rng(0)
+p_std, se_std = mc_call_price(S0, K, R, SIGMA, T, 1_000_000, rng)
+exact = bs_call_price(S0, K, R, SIGMA, T)
+ 
+z_ant = (p_ant - exact) / se_ant
+check("antithetic price unbiased (|z| < 3)", abs(z_ant) < 3,
+      f"price {p_ant:.4f} vs {exact:.4f}, z={z_ant:+.2f}")
+check("antithetic SE lower than standard", se_ant < se_std,
+      f"{se_ant:.5f} vs {se_std:.5f}  (ratio {se_ant/se_std:.3f})")
+ 
+# odd n_paths must not crash (n_paths // 2 pairs)
+rng = np.random.default_rng(1)
+p_odd, _ = mc_call_price_antithetic(S0, K, R, SIGMA, T, 10_001, rng)
+check("handles odd n_paths", np.isfinite(p_odd), f"got {p_odd:.4f}")
+ 
+ 
+# ----------------------------------------------------------------------
 print("\n" + "=" * 60)
 print(f"  {len(passed)} passed, {len(failed)} failed")
 if failed:
@@ -221,5 +243,7 @@ plt.tight_layout()
 plt.savefig("validation.png", dpi=130)
 print("\nSaved validation.png")
 plt.show()
+ 
+ 
  
 
